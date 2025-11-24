@@ -3,8 +3,7 @@ defmodule Chex.Parser.PGN do
   Portable Game Notation parser.
   """
 
-  alias Chex.Move
-  alias Chex.Parser
+  alias Chex.{Move, Parser}
 
   @behaviour Parser
 
@@ -38,11 +37,11 @@ defmodule Chex.Parser.PGN do
     |> label("tag name")
 
   tag =
-    ignore(eventually(ascii_char('[')))
+    ignore(eventually(ascii_char(~c'[')))
     |> ignore(repeat(ascii_char([?\s])))
     |> concat(tag_name)
     |> ignore(repeat(ascii_char([?\s])))
-    |> ignore(ascii_char('"'))
+    |> ignore(ascii_char(~c'"'))
     |> concat(tag_value)
     |> ignore(string("\""))
     |> ignore(repeat(ascii_char([?\s])))
@@ -51,11 +50,11 @@ defmodule Chex.Parser.PGN do
 
   move_num =
     integer(min: 1, max: 3)
-    |> repeat(ascii_char('.'))
-    |> repeat(ascii_char(' '))
+    |> repeat(ascii_char(~c'.'))
+    |> repeat(ascii_char(~c' '))
 
   comment = string("{") |> eventually(string("}"))
-  whitespace = ascii_char('\n\s\r')
+  whitespace = ascii_char(~c'\n\s\r')
 
   termination_marker =
     choice([
@@ -75,14 +74,16 @@ defmodule Chex.Parser.PGN do
     |> optional(ignore(termination_marker))
     |> optional(ignore(comment))
 
-  defparsec(:tag_pairs, tag |> times(min: 7) |> ignore(repeat(ascii_char('\r\n'))), inline: true)
+  defparsec(:tag_pairs, tag |> times(min: 7) |> ignore(repeat(ascii_char(~c'\r\n'))),
+    inline: true
+  )
 
   defparsec(
     :movetext,
     move
     |> optional(move)
     |> repeat()
-    |> ignore(repeat(ascii_char('\r\n')))
+    |> ignore(repeat(ascii_char(~c'\r\n')))
     |> eos(),
     inline: true
   )
