@@ -16,7 +16,7 @@ defmodule Chex.Parser.FEN do
   import NimbleParsec
 
   piece = integer(1)
-  square = ascii_char('pPrRnNbBqQkK')
+  square = ascii_char(~c'pPrRnNbBqQkK')
 
   row =
     choice([piece, square])
@@ -106,7 +106,7 @@ defmodule Chex.Parser.FEN do
 
   @spec serialize_board(%{}) :: String.t()
   def serialize_board(board) do
-    for r <- 8..1, f <- Board.files() do
+    for r <- 8..1//-1, f <- Board.files() do
       board[{f, r}]
     end
     |> Enum.chunk_every(8)

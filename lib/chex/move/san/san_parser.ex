@@ -134,7 +134,7 @@ defmodule Chex.Move.SanParser do
     move__7(rest, acc, stack, context, line, offset)
   end
 
-  defp move__10(<<"-O", _::binary>> = rest, acc, stack, context, line, offset) do
+  defp move__10(<<"-O", _::binary>> = rest, _acc, stack, context, line, offset) do
     [acc | stack] = stack
     move__7(rest, acc, stack, context, line, offset)
   end
